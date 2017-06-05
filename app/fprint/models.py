@@ -21,7 +21,6 @@ CODES_PER_INDEX = 65535
 
 
 class Entry(models.Model):
-
     STATUS_INIT = 0
     STATUS_PENDING = 1
     STATUS_DONE = 2
@@ -66,7 +65,6 @@ class Entry(models.Model):
 
 @receiver(pre_save, sender=Entry)
 def entry_pre_save(sender, instance, **kwargs):
-
     # calculate index id
     # increase index id every CODES_PER_INDEX block
     num_entries = Entry.objects.all().count()
@@ -76,8 +74,8 @@ def entry_pre_save(sender, instance, **kwargs):
         instance.index_id = (num_entries - 1) / CODES_PER_INDEX + 1
 
 
-    # if not instance.pk:
-    #     log.debug('Object creation.')
+        # if not instance.pk:
+        #     log.debug('Object creation.')
 
 
 @receiver(post_save, sender=Entry)
@@ -87,7 +85,10 @@ def entry_post_save(sender, instance, **kwargs):
 
         if RUN_ASYNC:
             pass
-            #render_entry_task.apply_async((instance,))
+            # render_entry_task.apply_async((instance,))
         else:
             pass
-            #render_entry_task(instance)
+            # render_entry_task(instance)
+
+
+
