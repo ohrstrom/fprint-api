@@ -47,20 +47,24 @@ class FprintBackend(object):
 
     def load_index(self):
 
-        log.info('load index from: {}'.format(self.index_files))
+        num_codes_in_index = 0
+        num_in_id_map = 0
 
-        self.index = load_inverted_index(self.index_files)
-        num_codes_in_index = inverted_index_size(self.index)
+        try:
+            self.index = load_inverted_index(self.index_files)
+            num_codes_in_index = inverted_index_size(self.index)
+            log.debug('index loaded: {}'.format(num_codes_in_index))
+        except Exception as e:
+            log.warning('unable to load index: {}'.format(e))
 
-        log.debug('index loaded: {}'.format(num_codes_in_index))
 
 
-        log.info('load id_map')
-
-        self.id_map = [str(e.uuid) for e in Entry.objects.all().order_by('created')]
-        num_in_id_map = len(self.id_map)
-
-        log.debug('id_map loaded: {}'.format(num_in_id_map))
+        try:
+            self.id_map = [str(e.uuid) for e in Entry.objects.all().order_by('created')]
+            num_in_id_map = len(self.id_map)
+            log.debug('id_map loaded: {}'.format(num_in_id_map))
+        except Exception as e:
+            log.warning('unable to load id_map: {}'.format(e))
 
 
         if(num_codes_in_index != num_in_id_map):
