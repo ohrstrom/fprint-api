@@ -23,7 +23,6 @@ last_modified_date = timezone.now()
 
 urlpatterns = [
     url(r'^$', RedirectView.as_view(url='/api/v1/', permanent=False)),
-    url(r'^s/', include('social_django.urls', namespace='social')),
     url(r'^api/v1/', include('app.urls_api', namespace='api')),
 ]
 

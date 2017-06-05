@@ -41,8 +41,8 @@ class FprintBackend(object):
 
         _create_index_block(list(batch), out_path)
 
+        qs.update(status=Entry.STATUS_DONE)
 
-        pass
 
 
     def load_index(self):
@@ -68,10 +68,6 @@ class FprintBackend(object):
 
 
 
-
-        pass
-
-
     def query_index(self, code):
 
         _, codes = decode_echoprint(str(code))
@@ -88,9 +84,7 @@ class FprintBackend(object):
 
 
 def parsing_entry_streamer(qs):
-    '''
-    Convenience generator for converting echoprint strings into codes
-    '''
+    # generator
     for entry in qs:
         yield decode_echoprint(
             echoprint_b64_zipped=b'{}'.format(entry.code)
