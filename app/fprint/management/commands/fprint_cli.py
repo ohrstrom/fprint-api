@@ -85,6 +85,7 @@ def test_codes():
             click.secho('result:   {} - {}'.format(uuid, score), fg='cyan')
             click.secho('original: {}'.format(entry.uuid), fg='cyan')
             click.secho('wrong match!', fg='red')
+            print(score_list)
             num_mismatch += 1
 
 

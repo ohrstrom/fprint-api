@@ -1,5 +1,6 @@
 import os
 import logging
+import time
 from django.conf import settings
 
 from echoprint_server import query_inverted_index, load_inverted_index, inverted_index_size, decode_echoprint
@@ -37,9 +38,13 @@ class FprintBackend(object):
 
         qs = Entry.objects.all().order_by('created')
 
-        batch = parsing_entry_streamer(qs)
+        start_time = time.time()
 
+        batch = parsing_entry_streamer(qs)
         _create_index_block(list(batch), out_path)
+
+        duration = (time.time() - start_time)
+        log.debug('rebuilt index in: {}'.format(duration))
 
         qs.update(status=Entry.STATUS_DONE)
 
@@ -51,9 +56,15 @@ class FprintBackend(object):
         num_in_id_map = 0
 
         try:
+
+            start_time = time.time()
+
             self.index = load_inverted_index(self.index_files)
             num_codes_in_index = inverted_index_size(self.index)
-            log.debug('index loaded: {}'.format(num_codes_in_index))
+
+            duration = (time.time() - start_time)
+
+            log.debug('index loaded: {} in {}'.format(num_codes_in_index, duration))
         except Exception as e:
             log.warning('unable to load index: {}'.format(e))
 

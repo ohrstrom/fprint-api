@@ -76,8 +76,8 @@ def entry_pre_save(sender, instance, **kwargs):
         instance.index_id = (num_entries - 1) / CODES_PER_INDEX + 1
 
 
-    if not instance.pk:
-        log.debug('Object creation. Will try to get id from remote api')
+    # if not instance.pk:
+    #     log.debug('Object creation.')
 
 
 @receiver(post_save, sender=Entry)
@@ -86,8 +86,8 @@ def entry_post_save(sender, instance, **kwargs):
         log.debug('Entry {} needs processing'.format(instance.pk))
 
         if RUN_ASYNC:
-            print('async')
+            pass
             #render_entry_task.apply_async((instance,))
         else:
-            print('sync')
+            pass
             #render_entry_task(instance)

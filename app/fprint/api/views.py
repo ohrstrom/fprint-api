@@ -15,7 +15,7 @@ from ..backend import FprintBackend
 
 
 backend = FprintBackend()
-backend.load_index()
+
 
 
 class EntryViewSet(mixins.CreateModelMixin,
@@ -28,10 +28,8 @@ class EntryViewSet(mixins.CreateModelMixin,
     lookup_field = 'uuid'
 
     def list(self, request, *args, **kwargs):
+
         queryset = Entry.objects.filter().order_by('-created')
-
-
-
         page = self.paginate_queryset(queryset)
 
         serializer = EntrySerializer(
@@ -42,17 +40,15 @@ class EntryViewSet(mixins.CreateModelMixin,
 
         return self.get_paginated_response(serializer.data)
 
-        # return Response({
-        #     'num_unprocessed': queryset.filter(status__lt=Entry.STATUS_DONE).count(),
-        #     'results': serializer.data
-        # })
 
     def create(self, request, *args, **kwargs):
+
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
+
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
     def get_or_create_detail(self, request, *args, **kwargs):
@@ -74,6 +70,7 @@ class EntryViewSet(mixins.CreateModelMixin,
 
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
+
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
     def perform_create(self, serializer):
@@ -86,6 +83,10 @@ class EntryViewSet(mixins.CreateModelMixin,
         data = request.data
 
         code = data['code']
+
+        # a bit ugly...
+        if not backend.index:
+            backend.load_index()
 
         results = backend.query_index(code=code)
 
