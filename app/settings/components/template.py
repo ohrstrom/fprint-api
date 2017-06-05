@@ -156,9 +156,6 @@ TEMPLATES = [
         'OPTIONS': {
             'context_processors': (
                 'django.contrib.auth.context_processors.auth',
-                # social auth
-                'social_django.context_processors.backends',
-                'social_django.context_processors.login_redirect',
                 #
                 'django.template.context_processors.i18n',
                 'django.template.context_processors.request',
