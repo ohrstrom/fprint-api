@@ -1,0 +1,17 @@
+session_name: playlist-fprint-api-channels
+start_directory: ./
+windows:
+
+- window_name: playlist-fprint-api
+  layout: tiled
+  shell_command_before:
+    - 'source ~/srv/playlist-fprint-api/bin/activate'
+  panes:
+    - shell_command:
+        - ./app/manage.py runworker
+    - shell_command:
+        - daphne app.asgi:channel_layer --port 8080 --bind 0.0.0.0
+    - cd website
+    - cd website
+
+

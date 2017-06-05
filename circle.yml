@@ -1,0 +1,20 @@
+machine:
+  services:
+    - redis
+  post:
+    - pyenv global 2.7.12 3.5.2
+
+dependencies:
+  post:
+    - pip install tox
+
+test:
+  override:
+    - tox
+
+#deployment:
+#  production:
+#    branch: master
+#
+#  staging:
+#    branch: staging

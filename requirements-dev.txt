@@ -1,0 +1,5 @@
+django-extensions
+ipython
+jupyter
+django-debug-toolbar
+colorlog

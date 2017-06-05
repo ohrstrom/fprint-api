@@ -1,0 +1,187 @@
+{% load i18n static compress raven sekizai_tags  %}<!doctype html>
+<html class="no-js" lang="{{ LANGUAGE_CODE }}">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title></title>
+    <meta name="description" content="{% block meta_description %}{% page_attribute 'meta_description' %}{% endblock %}"/>
+    <meta name="keywords" content="{% block meta_keywords %}{% endblock %}"/>
+    <meta name="author" content="palmbeach interactive"/>
+
+    <link rel="apple-touch-icon" sizes="57x57" href="{% static "img/favicons/apple-icon-57x57.png" %}">
+    <link rel="apple-touch-icon" sizes="60x60" href="{% static "img/favicons/apple-icon-60x60.png" %}">
+    <link rel="apple-touch-icon" sizes="72x72" href="{% static "img/favicons/apple-icon-72x72.png" %}">
+    <link rel="apple-touch-icon" sizes="76x76" href="{% static "img/favicons/apple-icon-76x76.png" %}">
+    <link rel="apple-touch-icon" sizes="114x114" href="{% static "img/favicons/apple-icon-114x114.png" %}">
+    <link rel="apple-touch-icon" sizes="120x120" href="{% static "img/favicons/apple-icon-120x120.png" %}">
+    <link rel="apple-touch-icon" sizes="144x144" href="{% static "img/favicons/apple-icon-144x144.png" %}">
+    <link rel="apple-touch-icon" sizes="152x152" href="{% static "img/favicons/apple-icon-152x152.png" %}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static "img/favicons/apple-icon-180x180.png" %}">
+    <link rel="icon" type="image/png" sizes="192x192"  href="{% static "img/favicons/android-icon-192x192.png" %}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static "img/favicons/favicon-32x32.png" %}">
+    <link rel="icon" type="image/png" sizes="96x96" href="{% static "img/favicons/favicon-96x96.png" %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static "img/favicons/favicon-16x16.png" %}">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="{% static "img/favicons/ms-icon-144x144.png" %}">
+    <meta name="theme-color" content="#ffffff">
+
+    {% block meta_opengraph %}{% endblock %}
+    <!-- stahl testing -->
+    <!-- start: compressed css -->
+    {% compress css %}
+        {% if debug %}
+            <link rel="stylesheet" href="{% static 'css/screen.css' %}"/>
+        {% else %}
+            <link rel="stylesheet" href="{% static 'dist/css/screen.css' %}"/>
+        {% endif %}
+    {% endcompress %}
+    <!-- end: compressed css -->
+
+    {% render_block "css" %}
+    {# render_block "css" postprocessor "compressor.contrib.sekizai.compress" #}
+
+    {# TODO: proper icon font implementation #}
+    {% block icon_font %}
+    <style>
+        @font-face {
+            font-family: 'hoodini icons';
+            src: url('{% static 'fonts/hoodini-icons.eot' %}');
+            src: url('{% static 'fonts/hoodini-icons.eot?#iefix' %}') format('embedded-opentype'),
+                 url('{% static 'fonts/hoodini-icons.woff' %}') format('woff'),
+                 url('{% static 'fonts/hoodini-iconsttf' %}') format('truetype'),
+                 url('{% static 'fonts/hoodini-icons.svg#hoodini-icons' %}') format('svg');
+            font-weight: normal;
+            font-style: normal;
+        }
+    </style>
+    {% endblock icon_font %}
+
+    <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,300i,400,500,700,900" rel="stylesheet">
+    {% block link %}{% endblock link %}
+
+    <style type="text/css">
+      @font-face {
+        font-family:"CeraRoundPro-Regular";
+        src: url('{% static 'fonts/CeraRoundPro-Regular.eot' %}');
+        src: url('{% static 'fonts/CeraRoundPro-Regular.eot?#iefix' %}') format('embedded-opentype'),
+             url('{% static 'fonts/CeraRoundPro-Regular.woff' %}') format('woff'),
+             url('{% static 'fonts/CeraRoundPro-Regular.woff2' %}') format('woff2');
+        font-weight: normal;
+        font-style: normal;
+      }
+    </style>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.5.10/webfont.js"></script>
+
+    <script>
+      WebFont.load({
+        custom: {
+          families: ['CeraRoundPro-Regular']
+        }
+      });
+    </script>
+
+    <!-- start: passing user data to js -->
+    <script>
+        document.user = null;
+    </script>
+    {% if user.is_authenticated %}
+    <script>
+        document.user = {
+            'uuid': {{ user.pk }},
+            'api_url': '{% url 'api:profile-detail' uuid=user.profile.uuid %}'
+        }
+    </script>
+    {% endif %}
+    <!-- end: passing user data to js -->
+
+    <!-- start: passing settings to js -->
+    <script>
+        document.settings = {
+            fb_app_id: '{{ settings.FACEBOOK_APP_ID }}',
+            channels_enabled: {% if settings.CHANNELS_ENABLED %}true{% else %}false{% endif %}
+        }
+    </script>
+    <!-- end: passing settings to js -->
+
+
+    <script src="https://cdn.ravenjs.com/3.14.0/raven.min.js"></script>
+    <script>
+        Raven.config('{% sentry_public_dsn 'https' %}').install();
+        {% if user.is_authenticated %}
+            Raven.setUserContext({
+                email: '{{ user.email }}',
+                id: '{{ user.pk }}'
+            });
+        {% endif %}
+
+    </script>
+
+
+    <!-- start: js translation catalog -->
+    <script type="text/javascript" src="{% url 'javascript-catalog' %}"></script>
+    <!-- end: js translation catalog -->
+
+    <!-- start: compressed js -->
+    {% compress js %}
+        {% if debug %}
+            <script src="{% static 'js/bundle.js' %}"></script>
+        {% else %}
+            <script src="{% static 'dist/js/bundle.js' %}"></script>
+        {% endif %}
+    {% endcompress %}
+    <!-- end: compressed js -->
+
+
+    {% render_block "js-ext" %}
+
+    {% render_block "js" %}
+
+
+</head>
+<body id="base" class="{% block body_extra_class %}{% endblock %}">
+
+    <div id="fb-root" data-turbolinks-permanent></div>
+
+    {% cms_toolbar %}
+    {# wrapper needed for side-nav, and outer wrapper for ios overflow-x #}
+    <div class="outer-wrapper">
+        <div class="wrapper">
+            {% block top_bar %}
+                {% include '_layout/_topbar.html' %}
+            {% endblock %}
+
+            <div class="content-wrapper">
+
+                {% block app_nav %}{% endblock %}
+
+                {% block site_messages %}
+                    {% if messages %}
+                        {% include '_layout/_site_messages.html' %}
+                    {% endif %}
+                {% endblock %}
+
+                {% block teaser %}{% endblock %}
+
+                <div class="content">
+                    {% block content %}{% endblock %}
+                </div>
+
+            </div>
+
+            {% block pilot %}
+                {% include '_layout/_footer_pilot.html' %}
+            {% endblock %}
+
+            {% block footer %}
+                {% include '_layout/_footer.html' %}
+            {% endblock %}
+        </div>
+    </div>
+    <!-- vue templates -->
+    {% include '_vue/_modal.html' %}
+
+    <div id="userlike_container" data-turbolinks-permanent></div>
+
+</body>
+</html>
