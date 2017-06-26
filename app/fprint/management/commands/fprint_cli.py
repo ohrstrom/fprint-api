@@ -40,6 +40,12 @@ def ingest():
     #
     #         time.sleep(0.2)
 
+@cli.command()
+def reset():
+
+    if click.confirm('Do you really want to reset the database?'):
+        click.echo(Entry.objects.all().delete())
+
 
 
 
