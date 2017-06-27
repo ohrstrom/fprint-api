@@ -6,8 +6,8 @@ image: python:2.7
 # Only needed when using a docker container to run your tests in.
 # Check out: http://docs.gitlab.com/ce/ci/docker/using_docker_images.html#what-is-service
 services:
-  - postgres:latest
-  - redis:latest
+  - postgres:9.6
+  - redis:3.0
 
 variables:
   POSTGRES_DB: database_name
@@ -49,4 +49,5 @@ test:
     CACHE_URL: 'redis://redis:6379/2'
     REDIS_URL: 'redis://redis:6379'
   script:
+  - pip install tox
   - tox
