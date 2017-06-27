@@ -50,4 +50,4 @@ test:
     CACHE_URL: 'redis://redis:6379/2'
     REDIS_URL: 'redis://redis:6379'
   script:
-  - tox
+  - python ./manage.py test
