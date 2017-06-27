@@ -7,6 +7,7 @@ image: python:2.7
 # Check out: http://docs.gitlab.com/ce/ci/docker/using_docker_images.html#what-is-service
 services:
   - postgres:latest
+  - redis:latest
 
 variables:
   POSTGRES_DB: database_name
@@ -45,5 +46,7 @@ test:
   variables:
     DATABASE_URL: "postgresql://postgres:postgres@postgres:5432/$POSTGRES_DB"
     SECRET_KEY: '1234567890'
+    CACHE_URL: 'redis://redis:6379/2'
+    REDIS_URL: 'redis://redis:6379'
   script:
   - python manage.py test
