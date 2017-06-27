@@ -47,7 +47,7 @@ test:
   variables:
     DATABASE_URL: "postgresql://postgres:postgres@postgres:5432/$POSTGRES_DB"
     SECRET_KEY: '1234567890'
-    CACHE_URL: 'redis://redis:6379/2'
+    CACHE_URL: 'redis://redis:6379/3'
     REDIS_URL: 'redis://redis:6379'
   script:
   - python ./manage.py test
