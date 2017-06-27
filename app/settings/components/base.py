@@ -43,7 +43,7 @@ WSGI_APPLICATION = 'app.wsgi.application'
 INSTALLED_APPS = [
 
     #'django_slick_admin',
-    #'django.contrib.admin',
+    'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -53,7 +53,7 @@ INSTALLED_APPS = [
     # http://whitenoise.evans.io/en/stable/django.html#using-whitenoise-in-development
     'whitenoise.runserver_nostatic',
     'django.contrib.staticfiles',
-    #'django.contrib.sites',
+    'django.contrib.sites',
     #'django.contrib.sitemaps',
     'django.contrib.humanize',
     #
@@ -105,10 +105,9 @@ AUTH_USER_MODEL = 'auth_extra.User'
 # TODO: make dynamic
 LOGIN_URL = '/account/login/'
 
-AUTHENTICATION_BACKENDS = (
-    'social_core.backends.email.EmailAuth',
+AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
-)
+]
 
 # LOGIN_REDIRECT_URL = '/account/pick-up/'
 

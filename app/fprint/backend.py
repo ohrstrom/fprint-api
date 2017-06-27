@@ -38,6 +38,9 @@ class FprintBackend(object):
 
         qs = Entry.objects.all().order_by('created')
 
+        log.debug('num entries: {}'.format(qs.count()))
+
+
         start_time = time.time()
 
         batch = parsing_entry_streamer(qs)
@@ -99,8 +102,9 @@ class FprintBackend(object):
 
 
 def parsing_entry_streamer(qs):
-    # generator
+
     for entry in qs:
+        print(str(entry.pk))
         yield decode_echoprint(
             echoprint_b64_zipped=b'{}'.format(entry.code)
         )[1]

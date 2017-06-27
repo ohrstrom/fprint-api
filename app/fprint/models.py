@@ -17,10 +17,11 @@ log = logging.getLogger(__name__)
 
 RUN_ASYNC = True
 
-CODES_PER_INDEX = 65535
-
+# CODES_PER_INDEX = 65535
+CODES_PER_INDEX = 8192
 
 class Entry(models.Model):
+
     STATUS_INIT = 0
     STATUS_PENDING = 1
     STATUS_DONE = 2
@@ -72,7 +73,6 @@ def entry_pre_save(sender, instance, **kwargs):
         instance.index_id = 1
     else:
         instance.index_id = (num_entries - 1) / CODES_PER_INDEX + 1
-
 
         # if not instance.pk:
         #     log.debug('Object creation.')

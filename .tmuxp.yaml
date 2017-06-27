@@ -2,13 +2,13 @@ session_name: playlist-fprint-api
 start_directory: ./
 windows:
 
-- window_name: playlist-fprint-api
+- window_name: fprint-api
   layout: tiled
   shell_command_before:
-    - 'source ~/srv/playlist-fprint-api/bin/activate'
+    - 'source ~/srv/fprint-api/bin/activate'
   panes:
     - shell_command:
-        - ./app/manage.py runserver 0.0.0.0:8080
+        - ./manage.py runserver 0.0.0.0:7777
     - cd app
     - cd app
     - cd app

@@ -18,17 +18,17 @@ from django.views.generic import RedirectView
 last_modified_date = timezone.now()
 
 
-#admin.autodiscover()
-#admin.site.site_header = 'api.example.com'
+admin.autodiscover()
+admin.site.site_header = 'api.example.com'
 
 urlpatterns = [
     url(r'^$', RedirectView.as_view(url='/api/v1/', permanent=False)),
     url(r'^api/v1/', include('app.urls_api', namespace='api')),
 ]
 
-urlpatterns += i18n_patterns(
+urlpatterns += [
     #url(r'^admin_tools/', include('admin_tools.urls')),
-    #url(r'^admin/', include(admin.site.urls)),
+    url(r'^admin/', include(admin.site.urls)),
     #url('^account/', include('auth_extra.urls')),
     #url('^account/', include('django.contrib.auth.urls')),
 
@@ -36,7 +36,7 @@ urlpatterns += i18n_patterns(
     #     last_modified(lambda req, **kw: last_modified_date)(JavaScriptCatalog.as_view()),
     #     name='javascript-catalog'),
 
-)
+]
 
 if settings.DEBUG:
     #urlpatterns = urlpatterns + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
