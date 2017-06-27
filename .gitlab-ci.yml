@@ -43,7 +43,16 @@ before_script:
 #
 # and then adding `--settings app.settings.ci` (or similar) to the test command
 
+
+# https://gitlab.pbi.io/help/ci/environments
+stages:
+  - test
+  - build
+  - deploy
+
 test:
+  stage: test
+  script: echo "Running tests"
   variables:
     DATABASE_URL: "postgresql://postgres:postgres@postgres:5432/$POSTGRES_DB"
     SECRET_KEY: '1234567890'
@@ -51,3 +60,29 @@ test:
     REDIS_URL: 'redis://redis:6379'
   script:
   - python ./manage.py test
+
+
+build:
+  stage: build
+  script: echo "Building the app"
+deploy_staging:
+  stage: deploy
+  script:
+    - echo "Deploy to staging server"
+  environment:
+    name: staging
+    url: https://staging.example.com
+  only:
+  - master
+
+deploy_prod:
+  stage: deploy
+  script:
+    - echo "Deploy to production server"
+  environment:
+    name: production
+    url: https://example.com
+  when: manual
+  only:
+  - master
+
