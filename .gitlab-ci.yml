@@ -24,8 +24,7 @@ before_script:
   - python -V # Print out python version for debugging
   # Uncomment next line if your Django app needs a JS runtime:
   # - apt-get update -q && apt-get install nodejs -yqq
-  - pip install -r requirements.txt
-  - pip install tox
+
 
 # To get Django tests to work you may need to create a settings file using
 # the following DATABASES:
@@ -59,12 +58,15 @@ test:
     CACHE_URL: 'redis://redis:6379/3'
     REDIS_URL: 'redis://redis:6379'
   script:
-  - python ./manage.py test
+    - pip install -r requirements.txt
+    - pip install tox
+    - python ./manage.py test
 
 
 build:
   stage: build
   script: echo "Building the app"
+
 deploy_staging:
   stage: deploy
   script:
