@@ -20,7 +20,8 @@ services:
       - db
     environment:
       DATABASE_URL: psql://postgres:postgres@db:5432/fprint_api
-
+      CACHE_URL: redis://localhost:6379/2
+      SECRET_KEY: 'aslkdhjlajsdlajdlkjaljdslajldsjalksjdljkads'
 
 #version: '2'
 #

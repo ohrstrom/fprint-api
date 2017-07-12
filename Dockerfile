@@ -4,5 +4,5 @@ RUN apt-get update && apt-get install -y netcat
 RUN mkdir -p /app
 WORKDIR /app
 ADD requirements.txt /app/
-RUN pip install -r requirements.txt
+RUN pip install --exists-action s -r requirements.txt
 ADD . /app/
