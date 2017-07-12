@@ -23,6 +23,6 @@ class User(AbstractEmailUser):
 
 
     def __str__(self):
-        if self.username:
-            return '{}'.format(self.username)
+        # if self.username:
+        #     return '{}'.format(self.username)
         return '{}'.format(self.email)

@@ -56,3 +56,5 @@ raven==6.0.0
 ##################################################################
 -e git+https://github.com/palmbeach-interactive/django-slick-admin@master#egg=django-slick-admin
 -e git+https://github.com/spotify/echoprint-server@master#egg=echoprint-server
+
+colorlog

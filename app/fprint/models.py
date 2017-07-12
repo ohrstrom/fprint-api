@@ -18,7 +18,7 @@ log = logging.getLogger(__name__)
 RUN_ASYNC = True
 
 # CODES_PER_INDEX = 65535
-CODES_PER_INDEX = 8192
+CODES_PER_INDEX = 1024
 
 class Entry(models.Model):
 
@@ -55,31 +55,65 @@ class Entry(models.Model):
         auto_now=True, editable=False, db_index=True
     )
 
+    # identification fields
     code = models.TextField(
-        null=True, blank=False
+        null=True, blank=False,
+        help_text=_('Echoprint code string, compressed')
     )
+
+    duration = models.DurationField(
+        null=True, blank=False, db_index=True,
+        help_text=_('Duration in seconds (float)')
+    )
+
+    name = models.CharField(
+        _('Track Name/Title'),
+        null=True, blank=True, max_length=(256), db_index=True,
+        help_text=_('Normalised to ASCII')
+    )
+
+    artist_name = models.CharField(
+        _('Artist Name'),
+        null=True, blank=True, max_length=(256), db_index=True,
+        help_text=_('Normalised to ASCII')
+    )
+
+
 
     index_id = models.PositiveIntegerField(
         null=True, blank=False
     )
 
+    class Meta:
+        ordering = ['pk']
+
 
 @receiver(pre_save, sender=Entry)
 def entry_pre_save(sender, instance, **kwargs):
-    # calculate index id
-    # increase index id every CODES_PER_INDEX block
-    num_entries = Entry.objects.all().count()
-    if num_entries < 1:
-        instance.index_id = 1
-    else:
-        instance.index_id = (num_entries - 1) / CODES_PER_INDEX + 1
 
-        # if not instance.pk:
-        #     log.debug('Object creation.')
+    # check for changes
+    if instance.pk:
+        _old_instance = Entry.objects.get(pk=instance.pk)
+
+        if instance.code != _old_instance.code:
+            instance.status = Entry.STATUS_PENDING
+            log.debug('code changed for {}'.format(instance.uuid))
+
 
 
 @receiver(post_save, sender=Entry)
 def entry_post_save(sender, instance, **kwargs):
+
+
+    # calculate index id
+    # increase index id every CODES_PER_INDEX block
+    index_id = (instance.pk - 1) / CODES_PER_INDEX + 1
+    if instance.index_id != index_id:
+        log.debug('setting index id for {} to {}'.format(instance.pk, index_id))
+        Entry.objects.filter(pk=instance.pk).update(index_id=index_id)
+        instance.refresh_from_db()
+
+
     if instance.status < Entry.STATUS_DONE:
         log.debug('Entry {} needs processing'.format(instance.pk))
 

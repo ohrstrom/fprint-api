@@ -50,6 +50,9 @@ class EntrySerializer(serializers.HyperlinkedModelSerializer):
             'status_display',
             'code',
             'index_id',
+            'name',
+            'artist_name',
+            'duration',
         ]
         # extra_kwargs = {
         #         'code': {'write_only': True}

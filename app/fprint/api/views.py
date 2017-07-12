@@ -2,11 +2,13 @@
 from __future__ import unicode_literals
 
 from django.urls import reverse
+from django.db.utils import ProgrammingError
 
 from rest_framework import mixins
 from rest_framework import status
 from rest_framework import viewsets
 from rest_framework.response import Response
+from rest_framework.decorators import api_view
 
 from .serializers import EntrySerializer
 from ..models import Entry
@@ -16,6 +18,13 @@ from ..backend import FprintBackend
 
 backend = FprintBackend()
 
+
+try:
+    backend.load_index()
+except ProgrammingError as e:
+    # database not ready/migrated
+    # TODO: check for a better way to handle this case
+    pass
 
 
 class EntryViewSet(mixins.CreateModelMixin,
@@ -113,3 +122,17 @@ entry_detail = EntryViewSet.as_view({
 entry_identify = EntryViewSet.as_view({
     'post': 'identify',
 })
+
+
+
+#######################################################################
+# control views
+#######################################################################
+
+@api_view(['GET',])
+def reload_index(request):
+    backend.load_index()
+
+    return Response({"num_ids": len(backend.id_map)})
+
+

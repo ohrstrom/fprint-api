@@ -1,0 +1,55 @@
+version: '3'
+
+services:
+  db:
+    image: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: fprint_api
+  web:
+    image: python:2.7
+    build: .
+    #command: python ./manage.py runserver 0.0.0.0:8000
+    command: bash -c "while ! nc -w 1 -z db 5432; do sleep 0.1; done; python ./manage.py migrate; while :; do ./manage.py runserver 0.0.0.0:8000; sleep 1; done"
+    volumes:
+      - .:/code
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: psql://postgres:postgres@db:5432/fprint_api
+
+
+#version: '2'
+#
+#services:
+#
+#  db:
+#    image: postgres
+#    environment:
+#      POSTGRES_PASSWORD: password
+#    volumes:
+#      - ./dbdata:/var/lib/postgresql/data
+#
+#  web:
+#    # Docker hack to wait until Postgres is up, then run stuff.
+#    #command: bash -c "while ! nc -w 1 -z db 5432; do sleep 0.1; done; ./manage.py migrate; while :; do ./manage.py runserver_plus 0.0.0.0:8000; sleep 1; done"
+#    command: ./manage.py runserver 0.0.0.0:8000
+#    image: python:2.7
+#    build: .
+#    volumes:
+#      - .:/code
+#    depends_on:
+#      - db
+#    environment:
+#      IN_DOCKER: 1
+#
+#  webserver:
+#    image: jumanjiman/caddy
+#    depends_on:
+#      - web
+#    ports:
+#      - "80:8000"
+#    command: -port 8000 -host 0.0.0.0 "proxy / web:8000 { }"

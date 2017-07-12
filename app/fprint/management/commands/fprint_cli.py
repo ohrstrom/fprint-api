@@ -12,7 +12,7 @@ from django.utils import timezone
 import djclick as click
 from django.conf import settings
 
-from ...models import Entry
+from ...models import Entry, CODES_PER_INDEX
 from ...utils import build_index
 from ...backend import FprintBackend
 
@@ -26,19 +26,11 @@ def cli():
     pass
 
 @cli.command()
-def ingest():
+def update_index():
 
     b = FprintBackend()
+    b.build_index(force_rebuild=False)
 
-    b.build_index()
-
-
-    # with click.progressbar(qs, label='build index', length=qs.count()) as bar:
-    #
-    #     for item in bar:
-    #         build_inverted_index()
-    #
-    #         time.sleep(0.2)
 
 @cli.command()
 def reset():
@@ -48,10 +40,14 @@ def reset():
 
 
 
-
 @cli.command()
-def test_codes():
+@click.option('--id', type=int)
+def test_codes(id):
+
     qs = Entry.objects.filter().order_by('-created')
+
+    if id:
+        qs = qs.filter(pk__in=[id])
 
     num_match = 0
     num_mismatch = 0
