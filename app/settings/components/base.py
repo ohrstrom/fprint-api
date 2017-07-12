@@ -12,7 +12,7 @@ ALLOWED_HOSTS = ['*',]
 # this fixes strange behaviour when running app through gunicorn
 DEBUG_TOOLBAR_PATCH_SETTINGS = False
 
-PUBLIC_APP_URL = env('PUBLIC_APP_URL', default='http://127.0.0.1:8000/')
+PUBLIC_APP_URL = env('PUBLIC_APP_URL', default='http://127.0.0.1:8000')
 SITE_ID = env.int('SITE_ID', default=1)
 
 
