@@ -23,6 +23,7 @@ services:
       DATABASE_URL: psql://postgres:postgres@db:5432/fprint_api
       CACHE_URL: redis://localhost:6379/2
       SECRET_KEY: 'aslkdhjlajsdlajdlkjaljdslajldsjalksjdljkads'
+      PUBLIC_APP_URL: 'http://web:8000'
 
 #version: '2'
 #
