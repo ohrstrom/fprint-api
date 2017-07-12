@@ -12,7 +12,7 @@ ALLOWED_HOSTS = ['*',]
 # this fixes strange behaviour when running app through gunicorn
 DEBUG_TOOLBAR_PATCH_SETTINGS = False
 
-SITE_URL = env('SITE_URL', default='http://localhost:8080/')
+PUBLIC_APP_URL = env('PUBLIC_APP_URL', default='http://127.0.0.1:7777/')
 SITE_ID = env.int('SITE_ID', default=1)
 
 
@@ -35,6 +35,8 @@ LANGUAGES = [
 
 ROOT_URLCONF = 'app.urls'
 WSGI_APPLICATION = 'app.wsgi.application'
+
+
 
 
 ##################################################################
@@ -123,7 +125,7 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 ##################################################################
 SETTINGS_EXPORT = [
     'DEBUG',
-    'SITE_URL',
+    'PUBLIC_APP_URL',
 ]
 
 ##################################################################

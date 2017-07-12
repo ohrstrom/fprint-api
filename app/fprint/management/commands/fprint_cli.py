@@ -17,7 +17,6 @@ from ...utils import build_index
 from ...backend import FprintBackend
 
 
-RUN_ASYNC = getattr(settings, 'MATCHING_RUN_ASYNC', False)
 ALWAYS_UPDATE = getattr(settings, 'MATCHING_ALWAYS_UPDATE', False)
 
 
