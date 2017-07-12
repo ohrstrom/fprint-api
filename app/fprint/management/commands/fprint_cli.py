@@ -17,7 +17,7 @@ from ...utils import build_index
 from ...backend import FprintBackend
 
 
-ALWAYS_UPDATE = getattr(settings, 'MATCHING_ALWAYS_UPDATE', False)
+PUBLIC_APP_URL = getattr(settings, 'PUBLIC_APP_URL')
 
 
 @click.group()
@@ -57,7 +57,7 @@ def test_codes(id):
             'code': entry.code
         }
 
-        url = 'http://127.0.0.1:7777/api/v1/fprint/identify/'
+        url = '{}/api/v1/fprint/identify/'.format(PUBLIC_APP_URL)
         r = requests.post(url, json=data)
 
         # click.echo('-')

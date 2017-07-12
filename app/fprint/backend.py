@@ -9,6 +9,7 @@ from echoprint_server_c import _create_index_block
 from .models import Entry
 
 INDEX_BASE_DIR = getattr(settings, 'INDEX_BASE_DIR')
+PUBLIC_APP_URL = getattr(settings, 'PUBLIC_APP_URL')
 
 log = logging.getLogger(__name__)
 
@@ -65,7 +66,7 @@ class FprintBackend(object):
 
         # TODO: implement propperly
         # notify API to reload index data
-        url = 'http://127.0.0.1:7777/api/v1/fprint/controls/reload-index/'
+        url = '{}/api/v1/fprint/controls/reload-index/'.format(PUBLIC_APP_URL)
         r = requests.get(url)
 
 
