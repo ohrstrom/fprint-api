@@ -1,9 +1,14 @@
 version: '3'
 
 services:
+  db:
+    volumes:
+      - fprint_db:/data
+    environment:
+      PGDATA: /data
   web:
     volumes:
-      - /data/fprint_index:/fprint_index
+      - fprint_index:/index
     environment:
       PUBLIC_APP_URL: 'http://web:8000'
-      INDEX_BASE_DIR: '/fprint_index'
+      INDEX_BASE_DIR: '/index'
