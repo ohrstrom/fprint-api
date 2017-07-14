@@ -7,6 +7,8 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: fprint_api
+    volumes:
+      - .:/code
   web:
     image: python:2.7
     build: .

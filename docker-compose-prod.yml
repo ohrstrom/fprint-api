@@ -12,3 +12,9 @@ services:
     environment:
       PUBLIC_APP_URL: 'http://web:8000'
       INDEX_BASE_DIR: '/index'
+
+volumes:
+  fprint_db:
+    driver: local
+  fprint_index:
+    driver: local
