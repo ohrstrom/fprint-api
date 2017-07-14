@@ -3,18 +3,20 @@ version: '3'
 services:
   db:
     volumes:
-      - fprint_db:/data
+#      - fprint_db:/data
+      - /data/fprint_db:/data
     environment:
       PGDATA: /data
   web:
     volumes:
-      - fprint_index:/index
+#      - fprint_index:/index
+      - /data/fprint_index:/index
     environment:
       PUBLIC_APP_URL: 'http://web:8000'
       INDEX_BASE_DIR: '/index'
 
-volumes:
-  fprint_db:
-    driver: local
-  fprint_index:
-    driver: local
+#volumes:
+#  fprint_db:
+#    driver: local
+#  fprint_index:
+#    driver: local
