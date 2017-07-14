@@ -1,0 +1,9 @@
+version: '3'
+
+services:
+  web:
+    volumes:
+      - /data/fprint_index:/fprint_index
+    environment:
+      PUBLIC_APP_URL: 'http://web:8000'
+      INDEX_BASE_DIR: '/fprint_index'
