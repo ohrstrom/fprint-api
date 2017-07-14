@@ -2,18 +2,35 @@ version: '3'
 
 services:
   db:
+    image: postgres
     volumes:
 #      - fprint_db:/data
       - /data/fprint_db:/data
     environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: fprint_api
       PGDATA: /data
   web:
+    image: python:2.7
+    build: .
+    #command: python ./manage.py runserver 0.0.0.0:8000
+    command: bash -c "while ! nc -w 1 -z db 5432; do sleep 0.1; done; python ./manage.py migrate; while :; do ./manage.py runserver 0.0.0.0:8000; sleep 1; done"
     volumes:
 #      - fprint_index:/index
       - /data/fprint_index:/index
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
     environment:
+      DEBUG: 'on'
+      DATABASE_URL: psql://postgres:postgres@db:5432/fprint_api
+      CACHE_URL: redis://localhost:6379/2
+      SECRET_KEY: 'aslkdhjlajsdlajdlkjaljdslajldsjalksjdljkads'
       PUBLIC_APP_URL: 'http://web:8000'
       INDEX_BASE_DIR: '/index'
+
 
 #volumes:
 #  fprint_db:
