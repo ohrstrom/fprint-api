@@ -34,5 +34,6 @@ include(
 
     # via server based settings in etc (placed by ansible deployment tasks)
     optional('/etc/fprint-api/application-settings.py'),
+    optional('/etc/fprint-api/logging.py'),
     scope=locals()
 )

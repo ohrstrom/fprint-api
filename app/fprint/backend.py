@@ -125,6 +125,10 @@ class FprintBackend(object):
 
     def query_index(self, code):
 
+        if not self.index:
+            log.info('query_index: index ot loaded > load it')
+            self.load_index()
+
         _, codes = decode_echoprint(str(code))
 
         results = query_inverted_index(codes, self.index, 'jaccard')
