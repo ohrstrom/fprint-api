@@ -181,3 +181,9 @@ PUBLIC_APP_URL = os.getenv('PUBLIC_APP_URL', 'http://127.0.0.1:8000')
 REMOTE_API_BASE_URL = os.getenv('REMOTE_API_BASE_URL', 'http://dev.openbroadcast.org')
 REMOTE_API_USER = os.getenv('REMOTE_API_USER', 'testuser')
 REMOTE_API_KEY = os.getenv('REMOTE_API_KEY', 'testkey')
+
+
+##################################################################
+# Fprint index settings
+##################################################################
+INDEX_BASE_DIR = os.getenv('INDEX_BASE_DIR', os.path.join(MEDIA_ROOT, 'fprint_index'))
