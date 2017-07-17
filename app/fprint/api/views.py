@@ -100,6 +100,19 @@ class EntryViewSet(mixins.CreateModelMixin,
 
     # search / identify handling
     def identify(self, request, *args, **kwargs):
+        """
+        identify entry by 'code' / fingerprint
+        accepts `echoprint-codegen` (version 4.12) generated format. 
+        used out of the code is the following information:
+        
+            {
+                'code': '<encoded code>',
+                'metadata': {
+                    'duration': '<duration in seconds>',
+                }
+            }
+            
+        """
 
         data = request.data
 
@@ -206,6 +219,10 @@ entry_identify = EntryViewSet.as_view({
 
 @api_view(['GET',])
 def reload_index(request):
+    """
+    view to trigger index-reloading from outside.
+    needed e.g. for the `fprint_cli update_index` command.
+    """
     backend.load_index()
 
     return Response({"num_ids": len(backend.id_map)})

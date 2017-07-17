@@ -11,7 +11,7 @@ ECHOPRINT_CODEGEN_BINARY = 'echoprint-codegen'
 
 # FPRINT_API_URL = 'http://10.40.10.214:8000'
 FPRINT_API_URL = 'http://172.20.10.240:8000'
-FPRINT_API_URL = 'http://127.0.0.1:7777'
+#FPRINT_API_URL = 'http://127.0.0.1:7777'
 
 try:
     from StringIO import StringIO as BytesIO

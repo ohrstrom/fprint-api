@@ -10,14 +10,12 @@ from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 from django.utils.translation import ugettext_lazy as _
 
-from .remote import APIClient
-from .tasks import render_entry_task
 
 log = logging.getLogger(__name__)
 
 RUN_ASYNC = True
 
-# CODES_PER_INDEX = 65535
+# number of codes to be stored per index
 CODES_PER_INDEX = 1024
 
 class Entry(models.Model):
@@ -78,8 +76,6 @@ class Entry(models.Model):
         help_text=_('Normalised to ASCII')
     )
 
-
-
     index_id = models.PositiveIntegerField(
         null=True, blank=False
     )
@@ -104,7 +100,6 @@ def entry_pre_save(sender, instance, **kwargs):
 @receiver(post_save, sender=Entry)
 def entry_post_save(sender, instance, **kwargs):
 
-
     # calculate index id
     # increase index id every CODES_PER_INDEX block
     index_id = (instance.pk - 1) / CODES_PER_INDEX + 1
@@ -115,14 +110,8 @@ def entry_post_save(sender, instance, **kwargs):
 
 
     if instance.status < Entry.STATUS_DONE:
-        log.debug('Entry {} needs processing'.format(instance.pk))
-
+        # log.debug('Entry {} needs processing'.format(instance.pk))
         if RUN_ASYNC:
             pass
-            # render_entry_task.apply_async((instance,))
         else:
             pass
-            # render_entry_task(instance)
-
-
-

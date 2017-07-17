@@ -1,3 +1,6 @@
+# -*- coding: utf-8 -*-
+#from __future__ import unicode_literals
+
 import os
 import logging
 import time
@@ -14,6 +17,11 @@ PUBLIC_APP_URL = getattr(settings, 'PUBLIC_APP_URL')
 log = logging.getLogger(__name__)
 
 class FprintBackend(object):
+    """
+    backend wrapper/implementation arount echoprint-server (aqquired by spottify)
+    https://github.com/spotify/echoprint-server
+    handles building, loading and querying fingerprint 'codes'
+    """
 
     index = None
     id_map = []
@@ -24,6 +32,9 @@ class FprintBackend(object):
 
 
     def build_index(self, force_rebuild=False):
+        """
+        builds the binary index from the 'codes' stored in the database
+        """
 
         log.info('build index in: {}'.format(INDEX_BASE_DIR))
 
@@ -46,8 +57,6 @@ class FprintBackend(object):
             pending_count = qs.filter(status=Entry.STATUS_PENDING).count()
 
             index_file = os.path.join(INDEX_BASE_DIR, 'index_{:06d}.bin'.format(index_id))
-
-            print('{} pending entries for index {}'.format(pending_count, index_id))
 
             if force_rebuild or pending_count > 0:
 
@@ -73,6 +82,10 @@ class FprintBackend(object):
 
 
     def load_index(self):
+        """
+        loads the binary index (from multiple files) to RAM. 
+        loads index map from database, needed to assign index position to actual uuid
+        """
 
         num_codes_in_index = 0
         num_in_id_map = 0
@@ -105,7 +118,7 @@ class FprintBackend(object):
 
             start_time = time.time()
 
-            self.id_map = [str(e[0]) for e in Entry.objects.values_list('uuid')]
+            self.id_map = [str(e[0]) for e in Entry.objects.filter(status=Entry.STATUS_DONE).values_list('uuid')]
 
             num_in_id_map = len(self.id_map)
 
@@ -124,6 +137,9 @@ class FprintBackend(object):
 
 
     def query_index(self, code):
+        """
+        query the index by code (encoded code-string)
+        """
 
         if not self.index:
             log.info('query_index: index ot loaded > load it')

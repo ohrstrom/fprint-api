@@ -8,8 +8,6 @@ from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 
 from ..models import Entry
-from ..remote import APIClient, API_BASE_URL
-
 
 
 class EntrySerializer(serializers.HyperlinkedModelSerializer):

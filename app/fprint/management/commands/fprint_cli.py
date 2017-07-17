@@ -13,7 +13,6 @@ import djclick as click
 from django.conf import settings
 
 from ...models import Entry, CODES_PER_INDEX
-from ...utils import build_index
 from ...backend import FprintBackend
 
 
@@ -25,14 +24,21 @@ def cli():
     pass
 
 @cli.command()
-def update_index():
+@click.option('--force', default=False, is_flag=True, help='Force to rebuild index?')
+def update_index(force):
+    """
+    update fprint index.
+    """
 
     b = FprintBackend()
-    b.build_index(force_rebuild=False)
+    b.build_index(force_rebuild=force)
 
 
 @cli.command()
 def reset():
+    """
+    reset fprint db.
+    """
 
     if click.confirm('Do you really want to reset the database?'):
         click.echo(Entry.objects.all().delete())
