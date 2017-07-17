@@ -24,6 +24,7 @@ app/components
 app/site-static/.sass-cache
 app/site-static/i18n-js
 app/reports
+app/local_settings.py
 app/device_data
 app/dev
 app/env
