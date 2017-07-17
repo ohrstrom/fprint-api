@@ -13,8 +13,6 @@ DEBUG = env('DEBUG')
 # add app path
 sys.path.insert(0, SITE_ROOT)
 
-
-
 #
 gettext = lambda s: s
 _ = gettext
@@ -26,6 +24,13 @@ include(
     'components/base.py',
     'components/template.py',
     'components/storage.py',
+
+    # optional local settings
+    optional(os.path.join(SITE_ROOT, 'local_settings.py')),
+
+    # via server based settings in etc (placed by ansible deployment tasks)
+    optional('/etc/fprint-cli/application-settings.py'),
+    
     scope=locals()
 )
 
