@@ -9,7 +9,9 @@ import subprocess
 
 ECHOPRINT_CODEGEN_BINARY = 'echoprint-codegen'
 
-FPRINT_API_URL = 'http://10.40.10.214:8000'
+# FPRINT_API_URL = 'http://10.40.10.214:8000'
+FPRINT_API_URL = 'http://172.20.10.240:8000'
+FPRINT_API_URL = 'http://127.0.0.1:7777'
 
 try:
     from StringIO import StringIO as BytesIO
@@ -29,16 +31,16 @@ def test_file(path):
 
     p = subprocess.Popen(command, stdout=subprocess.PIPE, close_fds=True)
 
-    data = json.loads(p.stdout.read())
+    data = json.loads(p.stdout.read())[0]
 
-    #print(data[0])
+    # print('***********************')
+    # print(data)
+    # print('***********************')
 
 
-    data = {
-        'code': data[0]['code']
-    }
-
-    print(data)
+    # data = {
+    #     'code': data['code']
+    # }
 
 
     url = '{}/api/v1/fprint/identify/'.format(FPRINT_API_URL)
@@ -47,11 +49,16 @@ def test_file(path):
 
     r = requests.post(url, json=data)
 
-    print(r.text)
-    print(r.json())
+    results = r.json()
 
+    for result in results:
+        print(result)
 
+        # r2 = requests.get('http://local.openbroadcast.org:8080/api/v1/library/track/{}/'.format(result['uuid']))
+        # print(r2.json())
+        print('-----------------------------')
 
+        #print('http://local.openbroadcast.org:8080/api/v1/library/track/{}/?format=json'.format(result['uuid']))
 
 
 
@@ -59,5 +66,3 @@ if __name__ == '__main__':
 
     path = sys.argv[1]
     test_file(path)
-
-

@@ -1,8 +1,12 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import logging
+
 from django.urls import reverse
 from django.db.utils import ProgrammingError
+from django.conf import settings
+from django.db.models import Q, Case, When
 
 from rest_framework import mixins
 from rest_framework import status
@@ -10,11 +14,19 @@ from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 
+from datetime import timedelta
+
 from .serializers import EntrySerializer
 from ..models import Entry
 
 from ..backend import FprintBackend
 
+RESULT_MIN_SCORE = 0.011 # score-range: 0 - 1
+RESULT_DURATION_TOLERANCE = 10.0 # seconds
+
+PUBLIC_APP_URL = getattr(settings, 'PUBLIC_APP_URL')
+
+log = logging.getLogger(__name__)
 
 backend = FprintBackend()
 
@@ -91,19 +103,82 @@ class EntryViewSet(mixins.CreateModelMixin,
 
         data = request.data
 
+        #print(data)
+
         code = data['code']
+        metadata = data.get('metadata', {})
+        duration = metadata.get('duration')
+
+        print(duration)
 
         # a bit ugly...
         if not backend.index:
             backend.load_index()
 
-        results = backend.query_index(code=code)
+        _results = backend.query_index(code=code)
 
-        for r in results:
-            r['uri'] = reverse('api:fprint-api:entry-detail', kwargs={'uuid': r['uuid']})
+        # remove results with score below threshold
+        results = list(filter(lambda d: d['score'] > RESULT_MIN_SCORE, _results))
+
+        # created sorted queryset out of results
+        uuid_list = [r['uuid'] for r in results]
+        preserved = Case(*[When(uuid=uuid, then=pos) for pos, uuid in enumerate(uuid_list)])
+        qs = Entry.objects.filter(uuid__in=uuid_list).order_by(preserved).distinct()
 
 
-        return Response(results, status=status.HTTP_200_OK)
+        if duration:
+            duration_tolerance = RESULT_DURATION_TOLERANCE
+            duration_min = timedelta(seconds=float(duration) - float(duration_tolerance))
+            duration_max = timedelta(seconds=float(duration) + float(duration_tolerance))
+
+            # print('duration_tolerance: {}'.format(duration_tolerance))
+            # print('duration_min:       {}'.format(duration_min))
+            # print('duration_max:       {}'.format(duration_max))
+
+            log.debug('filter by duration - tolerance: {} - min: {} - max: {}'.format(
+                duration_tolerance,
+                duration_min,
+                duration_max,
+            ))
+
+            qs = qs.filter(duration__range=[duration_min, duration_max])
+
+        data = []
+
+
+        for entry in qs:
+
+            # get original dict from results
+            # https://stackoverflow.com/a/8653568/469111
+            _r = (item for item in results if item['uuid'] == str(entry.uuid)).next()
+
+            data.append({
+                'uuid': '{}'.format(entry.uuid),
+                'duration': '{}'.format(float(entry.duration.seconds)),
+                'name': '{}'.format(entry.name),
+                'artist': '{}'.format(entry.artist_name),
+                #'uri': '{}{}'.format(PUBLIC_APP_URL, reverse('api:fprint-api:entry-detail', kwargs={'uuid': entry.uuid})),
+                'score': '{}'.format(_r['score']),
+            })
+
+
+
+        num_results = len(data)
+
+        if num_results:
+            log.debug('highest score: {} - num. results: {}'.format(data[0]['score'], num_results))
+        else:
+            log.debug('no results for code')
+
+
+
+
+        # for r in results:
+        #     r['uri'] = '{}{}'.format(PUBLIC_APP_URL, reverse('api:fprint-api:entry-detail', kwargs={'uuid': r['uuid']}))
+
+
+
+        return Response(data, status=status.HTTP_200_OK)
 
 
 
