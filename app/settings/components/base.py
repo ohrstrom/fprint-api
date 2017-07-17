@@ -119,7 +119,7 @@ ADMIN_MEDIA_PREFIX = os.path.join(APP_ROOT, 'static', 'admin')
 ADMIN_MEDIA_PREFIX = '/static/admin/'
 
 STATICFILES_DIRS = [
-    STATIC_ROOT,
+    os.getenv('STATIC_ROOT', os.path.join(APP_ROOT, 'site-static')),
 ]
 
 STATICFILES_FINDERS = (
