@@ -2,9 +2,12 @@
 import os
 import sys
 import posixpath
+import dj_database_url
 
 
-SECRET_KEY = env('SECRET_KEY')
+#SECRET_KEY = env('SECRET_KEY')
+SECRET_KEY = '--change-me--'
+DEBUG = False
 
 FILER_DEBUG = DEBUG
 ALLOWED_HOSTS = ['*',]
@@ -12,11 +15,11 @@ ALLOWED_HOSTS = ['*',]
 # this fixes strange behaviour when running app through gunicorn
 DEBUG_TOOLBAR_PATCH_SETTINGS = False
 
-PUBLIC_APP_URL = env('PUBLIC_APP_URL', default='http://127.0.0.1:8000')
-SITE_ID = env.int('SITE_ID', default=1)
+
+SITE_ID = 1
 
 
-LOCALE_PATHS = [root('locale')]
+LOCALE_PATHS = [os.path.join(APP_ROOT, 'locale')]
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
@@ -98,6 +101,36 @@ MIDDLEWARE_CLASSES = [
 ##################################################################
 # database
 ##################################################################
+DATABASES = {
+    'default': dj_database_url.config(default='sqlite:///app/data.sqlite3')
+}
+
+
+##################################################################
+# media, static & co
+##################################################################
+MEDIA_ROOT = os.getenv('MEDIA_ROOT', os.path.join(APP_ROOT, 'media'))
+MEDIA_URL = os.getenv('MEDIA_URL', '/media/')
+
+STATIC_ROOT = os.getenv('STATIC_ROOT', os.path.join(APP_ROOT, 'static'))
+STATIC_URL = os.getenv('STATIC_URL', '/static/')
+
+ADMIN_MEDIA_PREFIX = os.path.join(APP_ROOT, 'static', 'admin')
+ADMIN_MEDIA_PREFIX = '/static/admin/'
+
+STATICFILES_DIRS = [
+    '/static/'
+]
+
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'compressor.finders.CompressorFinder',
+)
+
+COMPRESS_OUTPUT_DIR = 'c'
+
+
 
 ##################################################################
 # authentication
@@ -137,16 +170,14 @@ REST_FRAMEWORK = {
 }
 
 ##################################################################
+# App
+##################################################################
+PUBLIC_APP_URL = os.getenv('PUBLIC_APP_URL', 'http://127.0.0.1:8000')
+
+
+##################################################################
 # Remote API (OBP)
 ##################################################################
-
-REMOTE_API_BASE_URL = env('REMOTE_API_BASE_URL', default='https://www.openbroadcast.org')
-REMOTE_API_USER = env('REMOTE_API_USER', default='peter')
-REMOTE_API_KEY = env('REMOTE_API_KEY', default='peter')
-
-
-
-##################################################################
-# Fprint index settings
-##################################################################
-INDEX_BASE_DIR = env('INDEX_BASE_DIR', default=str(root.path('public/fprint_index/')))
+REMOTE_API_BASE_URL = os.getenv('REMOTE_API_BASE_URL', 'http://dev.openbroadcast.org')
+REMOTE_API_USER = os.getenv('REMOTE_API_USER', 'testuser')
+REMOTE_API_KEY = os.getenv('REMOTE_API_KEY', 'testkey')
