@@ -23,13 +23,15 @@ class Entry(models.Model):
     STATUS_INIT = 0
     STATUS_PENDING = 1
     STATUS_DONE = 2
+    STATUS_DELETED = 90
     STATUS_ERROR = 99
 
     STATUS_CHOICES = (
-        (STATUS_INIT, _('Initialized')),
-        (STATUS_PENDING, _('Pending')),
-        (STATUS_DONE, _('Done')),
-        (STATUS_ERROR, _('Error')),
+        (STATUS_INIT, 'Initialized'),
+        (STATUS_PENDING, 'Pending'),
+        (STATUS_DONE, 'Done'),
+        (STATUS_DELETED, 'Deleted'),
+        (STATUS_ERROR, 'Error'),
     )
 
     status = models.PositiveSmallIntegerField(
@@ -104,7 +106,7 @@ def entry_post_save(sender, instance, **kwargs):
     # increase index id every CODES_PER_INDEX block
     index_id = (instance.pk - 1) / CODES_PER_INDEX + 1
     if instance.index_id != index_id:
-        log.debug('setting index id for {} to {}'.format(instance.pk, index_id))
+        # log.debug('setting index id for {} to {}'.format(instance.pk, index_id))
         Entry.objects.filter(pk=instance.pk).update(index_id=index_id)
         instance.refresh_from_db()
 

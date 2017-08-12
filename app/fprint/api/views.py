@@ -43,6 +43,7 @@ class EntryViewSet(mixins.CreateModelMixin,
                       mixins.ListModelMixin,
                       mixins.RetrieveModelMixin,
                       mixins.UpdateModelMixin,
+                      mixins.DestroyModelMixin,
                       viewsets.GenericViewSet):
     queryset = Entry.objects.all().order_by('-created')
     serializer_class = EntrySerializer
@@ -97,6 +98,9 @@ class EntryViewSet(mixins.CreateModelMixin,
     def perform_create(self, serializer):
         serializer.save()
 
+    def perform_destroy(self, instance):
+        instance.status = Entry.STATUS_DELETED
+        instance.save()
 
     # search / identify handling
     def identify(self, request, *args, **kwargs):
@@ -119,10 +123,9 @@ class EntryViewSet(mixins.CreateModelMixin,
         #print(data)
 
         code = data['code']
+        min_score = data.get('min_score', RESULT_MIN_SCORE)
         metadata = data.get('metadata', {})
         duration = metadata.get('duration')
-
-        print(duration)
 
         # a bit ugly...
         if not backend.index:
@@ -131,7 +134,7 @@ class EntryViewSet(mixins.CreateModelMixin,
         _results = backend.query_index(code=code)
 
         # remove results with score below threshold
-        results = list(filter(lambda d: d['score'] > RESULT_MIN_SCORE, _results))
+        results = list(filter(lambda d: d['score'] > min_score, _results))
 
         # created sorted queryset out of results
         uuid_list = [r['uuid'] for r in results]
@@ -179,7 +182,7 @@ class EntryViewSet(mixins.CreateModelMixin,
         num_results = len(data)
 
         if num_results:
-            log.debug('highest score: {} - num. results: {}'.format(data[0]['score'], num_results))
+            log.debug('highest score: {} - num. results: {} - min. score: {}'.format(data[0]['score'], num_results, min_score))
         else:
             log.debug('no results for code')
 
@@ -205,6 +208,7 @@ entry_detail = EntryViewSet.as_view({
     'get': 'retrieve',
     'put': 'get_or_create_detail',
     'patch': 'update',
+    'delete': 'destroy',
 })
 
 entry_identify = EntryViewSet.as_view({
@@ -218,9 +222,18 @@ entry_identify = EntryViewSet.as_view({
 #######################################################################
 
 @api_view(['GET',])
+def build_index(request):
+    """
+    view to trigger index-rebuilding from 'outside'.
+    """
+    backend.build_index()
+
+    return Response({"num_ids": len(backend.id_map)})
+
+@api_view(['GET',])
 def reload_index(request):
     """
-    view to trigger index-reloading from outside.
+    view to trigger index-reloading from 'outside'.
     needed e.g. for the `fprint_cli update_index` command.
     """
     backend.load_index()

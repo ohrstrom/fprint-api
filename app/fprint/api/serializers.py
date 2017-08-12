@@ -35,7 +35,7 @@ class EntrySerializer(serializers.HyperlinkedModelSerializer):
 
     status_display = serializers.SerializerMethodField()
     def get_status_display(self, obj):
-        return '{}'.format(obj.get_status_display())
+        return '{}'.format(obj.get_status_display()).lower()
 
 
     class Meta:

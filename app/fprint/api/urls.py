@@ -12,5 +12,6 @@ urlpatterns = [
     url(r'^entry/(?P<uuid>[0-9A-Fa-f-]+)/$', views.entry_detail, name='entry-detail'),
 
     # control urls
+    url(r'^controls/build-index/$', views.build_index, name='controls-build-index'),
     url(r'^controls/reload-index/$', views.reload_index, name='controls-reload-index'),
 ]

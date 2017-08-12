@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import os
 import sys
-import environ
 from split_settings.tools import optional, include
 
 # reference to absolute paths for later use

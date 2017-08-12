@@ -6,6 +6,7 @@ import logging
 import time
 import requests
 from django.conf import settings
+from django.db.models import Q
 
 from echoprint_server import query_inverted_index, load_inverted_index, inverted_index_size, decode_echoprint
 from echoprint_server_c import _create_index_block
@@ -54,7 +55,11 @@ class FprintBackend(object):
             # only a whole block can be updated as a whole
 
             qs = Entry.objects.filter(index_id=index_id)
-            pending_count = qs.filter(status=Entry.STATUS_PENDING).count()
+
+            # include entries marked for deletion
+            pending_count = qs.filter(
+                Q(status=Entry.STATUS_PENDING) | Q(status=Entry.STATUS_DELETED)
+            ).count()
 
             index_file = os.path.join(INDEX_BASE_DIR, 'index_{:06d}.bin'.format(index_id))
 
@@ -64,14 +69,20 @@ class FprintBackend(object):
 
                 start_time = time.time()
 
-                batch = parsing_entry_streamer(qs)
+                batch = parsing_entry_streamer(qs.exclude(status=Entry.STATUS_DELETED))
                 _create_index_block(list(batch), index_file)
 
                 duration = (time.time() - start_time)
                 log.debug('rebuilt index in: {}'.format(duration))
-                print('rebuilt index in: {}'.format(duration))
+                # print('rebuilt index in: {}'.format(duration))
 
+                # delete marked entries
+                qs.filter(status=Entry.STATUS_DELETED).delete()
+
+                # set status to done for remaining entries
                 qs.update(status=Entry.STATUS_DONE)
+
+
 
         # TODO: implement propperly
         # notify API to reload index data
@@ -132,7 +143,7 @@ class FprintBackend(object):
 
 
         if(num_codes_in_index != num_in_id_map):
-            log.error('code / id amount not matching! codes: {} vs ids: {}'.format(num_codes_in_index, num_in_id_map))
+            log.warning('code / id amount not matching! codes: {} vs ids: {}'.format(num_codes_in_index, num_in_id_map))
 
 
 
