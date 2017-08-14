@@ -43,7 +43,7 @@ def test_file(path):
     # }
 
     data.update({
-            'min_score': 0.25,
+            'min_score': 0.025,
         })
 
 
