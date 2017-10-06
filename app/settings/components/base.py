@@ -6,7 +6,7 @@ import dj_database_url
 
 
 #SECRET_KEY = env('SECRET_KEY')
-SECRET_KEY = '--change-me--'
+SECRET_KEY = os.getenv('SECRET_KEY', '--change-me--')
 DEBUG = False
 
 FILER_DEBUG = DEBUG

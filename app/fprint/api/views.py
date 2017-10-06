@@ -120,8 +120,6 @@ class EntryViewSet(mixins.CreateModelMixin,
 
         data = request.data
 
-        #print(data)
-
         code = data['code']
         min_score = data.get('min_score', RESULT_MIN_SCORE)
         duration_tolerance = data.get('duration_tolerance', RESULT_DURATION_TOLERANCE)

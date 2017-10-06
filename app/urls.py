@@ -19,7 +19,7 @@ last_modified_date = timezone.now()
 
 
 admin.autodiscover()
-admin.site.site_header = 'api.example.com'
+admin.site.site_header = 'Fingerprint API'
 
 urlpatterns = [
     url(r'^$', RedirectView.as_view(url='/api/v1/', permanent=False)),

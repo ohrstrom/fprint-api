@@ -7,12 +7,6 @@ from split_settings.tools import optional, include
 SITE_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
 APP_ROOT = os.path.join(SITE_ROOT, 'app')
 
-# print('SITE_ROOT: {}'.format(SITE_ROOT))
-# print('APP_ROOT:  {}'.format(APP_ROOT))
-
-print(os.path.join(APP_ROOT, 'local_settings.py'))
-
-
 # add app path
 sys.path.insert(0, APP_ROOT)
 
