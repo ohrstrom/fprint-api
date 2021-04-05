@@ -31,7 +31,7 @@ django-split-settings==0.2.5
 # RESTful API
 # http://www.django-rest-framework.org/#installation
 ##################################################################
-djangorestframework==3.6.3
+djangorestframework==3.11.2
 markdown==2.6.8
 coreapi==2.3.1
 
