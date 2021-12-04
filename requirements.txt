@@ -1,7 +1,7 @@
 ##################################################################
 # core python modules
 ##################################################################
-Django==1.11.3
+Django==2.2.24
 
 
 ##################################################################
@@ -10,7 +10,7 @@ Django==1.11.3
 whitenoise==3.3.0
 psycopg2
 django_redis
-gunicorn==19.7.1
+gunicorn==19.10.0
 dj-database-url==0.4.2
 
 #
@@ -31,7 +31,7 @@ django-split-settings==0.2.5
 # RESTful API
 # http://www.django-rest-framework.org/#installation
 ##################################################################
-djangorestframework==3.6.3
+djangorestframework==3.11.2
 markdown==2.6.8
 coreapi==2.3.1
 
