@@ -1,7 +1,7 @@
 ##################################################################
 # core python modules
 ##################################################################
-Django==1.11.3
+Django==3.2.15
 
 
 ##################################################################
@@ -59,3 +59,4 @@ raven==6.0.0
 -e git+https://github.com/digris/echoprint-server@master#egg=echoprint-server
 
 colorlog
+celery>=5.2.2 # not directly required, pinned by Snyk to avoid a vulnerability
